@@ -17,37 +17,38 @@ public class BaseDAO {
     protected BaseDAO() {
     }
 
-    public Session getSession() {
-        try {
-            return sessionFactory.getCurrentSession();
-        } catch(HibernateException e) {
-            return sessionFactory.openSession();
+    private Session currentSession;
+
+    private Transaction currentTransaction;
+
+    public Session openCurrentSession() {
+        currentSession = sessionFactory.openSession();
+        return currentSession;
+    }
+
+    public Session openCurrentSessionwithTransaction() {
+        currentSession = sessionFactory.openSession();
+        currentTransaction = currentSession.beginTransaction();
+        return currentSession;
+    }
+
+    public void closeCurrentSession() {
+        currentSession.close();
+    }
+
+    public void closeCurrentSessionwithTransaction() {
+        if (!currentTransaction.wasCommitted()) {
+            currentTransaction.commit();
         }
+        currentSession.close();
     }
 
-    protected void begin() {
-        getSession().getTransaction().begin();
+    public Session getCurrentSession() {
+        return currentSession;
     }
 
-    protected void commit() {
-        Transaction tx = getSession().getTransaction();
-        if(tx.isActive()) {
-            tx.commit();
-        }
+    public Transaction getCurrentTransaction() {
+        return currentTransaction;
     }
-
-    protected void rollback() {
-        try {
-            getSession().getTransaction().rollback();
-            getSession().close();
-        } catch (HibernateException e) {
-            LOG.error("Repository fail", e);
-        }
-    }
-
-    public void close() {
-        getSession().close();
-    }
-
 
 }

@@ -3,6 +3,7 @@ package ua.com.nure.dlas.repository.impl;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import ua.com.nure.dlas.model.Course;
 import ua.com.nure.dlas.repository.CoursesDAO;
 
@@ -22,37 +23,38 @@ public class CoursesDAOHibernateImpl extends BaseDAO implements CoursesDAO {
     @Override
     public boolean uploadCourses(List<Course> courses) {
         try {
-            begin();
+            Session session = openCurrentSessionwithTransaction();
 
             for (int i = 0; i < courses.size(); i++) {
-                getSession().save(courses.get(i));
+                session.save(courses.get(i));
                 if (i % batchSize == 0) {
-                    getSession().flush();
-                    getSession().clear();
+                    session.flush();
+                    session.clear();
                 }
             }
-            commit();
             return true;
         } catch (HibernateException e) {
-            rollback();
+            getCurrentTransaction().rollback();
             LOG.error("Could not upload courses", e);
             return false;
+        } finally {
+            closeCurrentSessionwithTransaction();
         }
     }
 
     @Override
     public List<Course> getCoursesForGroup(String groupName) {
         try {
-            begin();
-            Query q = getSession().createQuery("from Course where groupName = :groupName");
+            Session session = openCurrentSession();
+            Query q = session.createQuery("from Course where groupName = :groupName");
             q.setParameter("groupName", groupName);
             List<Course> notes = q.list();
-            commit();
             return notes;
         } catch (HibernateException e) {
-            rollback();
             LOG.error("Could not get courses", e);
             return Collections.emptyList();
+        } finally {
+            closeCurrentSession();
         }
     }
 }
