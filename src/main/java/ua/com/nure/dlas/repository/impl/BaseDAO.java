@@ -1,5 +1,6 @@
 package ua.com.nure.dlas.repository.impl;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,6 +11,8 @@ public class BaseDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
+
+    private static final Logger LOG = Logger.getLogger(CoursesDAOHibernateImpl.class);
 
     protected BaseDAO() {
     }
@@ -33,12 +36,12 @@ public class BaseDAO {
         }
     }
 
-    protected void rollback() throws Exception {
+    protected void rollback() {
         try {
             getSession().getTransaction().rollback();
             getSession().close();
         } catch (HibernateException e) {
-            throw new Exception("Repository fail", e);
+            LOG.error("Repository fail", e);
         }
     }
 

@@ -13,8 +13,13 @@ public class UserServiceImpl implements UserService {
     private UserDAO userDAO;
 
     @Override
-    public User getUser(String username) throws Exception {
+    public User getUser(String username) {
         return userDAO.getUser(username);
+    }
+
+    @Override
+    public String getGroupName(String email) {
+        return userDAO.getUserGroupName(email);
     }
 
 }

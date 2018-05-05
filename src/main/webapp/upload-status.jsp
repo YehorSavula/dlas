@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ru">
-    <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
     <head>
 
@@ -29,30 +29,37 @@
                     <a class="navbar-brand" href="#"><img src="<c:url value='/resources/image/Logo_new.png'/>" alt="Система Дистанционного Учета Успеваемости">
                     <a class="navbar-brand" href="#">ХНУРЭ СДУУ</a>
                 </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<c:url value='/upload-program'/>">Загрузить рабочую программу</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<c:url value='/accepted-courses'/>">Пройденные курсы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout">Выход</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
         <!-- Page Content -->
         <div class="container">
-            <form class="form-horizontal pt-5" action="<c:url value='/security_login'/>" method="post">
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="email">Email:</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Введите email">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="pwd">Пароль:</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="pwd" name="password" placeholder="Введите пароль">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default">Войти</button>
-                    </div>
-                </div>
-            </form>
+            <div class="pt-5">
+                <c:choose>
+                    <c:when test="${isUploaded}">
+                        <h1>Программа успешно загружена</h1>
+                    </c:when>
+                    <c:otherwise>
+                        <h1>Упс, что-то пошло не так, обратитесь к системному администратору</h1>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
         <!-- /.container -->
 
@@ -70,3 +77,4 @@
     </body>
 
 </html>
+

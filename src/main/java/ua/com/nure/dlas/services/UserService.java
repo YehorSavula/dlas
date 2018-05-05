@@ -6,4 +6,5 @@ public interface UserService {
 
     User getUser(String username) throws Exception;
 
+    String getGroupName(String email);
 }

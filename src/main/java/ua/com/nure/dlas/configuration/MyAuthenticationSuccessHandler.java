@@ -19,7 +19,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     private static final Map<String, String> REDIRECT_MAPPING = ImmutableMap.of(
-            Role.MANAGER.name(), "/manager",
+            Role.MANAGER.name(), "/upload-program",
             Role.STUDENT.name(), "/student",
             Role.TEACHER.name(), "/teacher"
     );

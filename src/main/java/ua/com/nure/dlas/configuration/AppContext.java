@@ -14,16 +14,22 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import ua.com.nure.dlas.repository.CoursesDAO;
 import ua.com.nure.dlas.repository.UserDAO;
+import ua.com.nure.dlas.repository.impl.CoursesDAOHibernateImpl;
 import ua.com.nure.dlas.repository.impl.UserDAOHibernateImpl;
+import ua.com.nure.dlas.services.ManagerService;
 import ua.com.nure.dlas.services.UserService;
+import ua.com.nure.dlas.services.impl.ManagerServiceImpl;
 import ua.com.nure.dlas.services.impl.UserServiceImpl;
+import ua.com.nure.dlas.services.utils.ProgramParser;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -46,6 +52,9 @@ public class AppContext extends WebMvcConfigurerAdapter {
         dataSource.setUrl(environment.getRequiredProperty("db.url"));
         dataSource.setUsername(environment.getRequiredProperty("db.username"));
         dataSource.setPassword(environment.getRequiredProperty("db.password"));
+        dataSource.setMaxActive(30);
+        dataSource.setMaxIdle(10);
+        dataSource.setMaxWait(1000);
         return dataSource;
     }
 
@@ -54,6 +63,11 @@ public class AppContext extends WebMvcConfigurerAdapter {
         properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
         properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
         properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
+        properties.put("hibernate.jdbc.batch_size", environment.getRequiredProperty("hibernate.jdbc.batch_size"));
+        properties.put("hibernate.cache.use_second_level_cache", false);
+        properties.put("hibernate.connection.characterEncoding", "utf8");
+        properties.put("hibernate.connection.CharSet", "utf8");
+        properties.put("hibernate.connection.useUnicode", true);
         return properties;
     }
 
@@ -91,7 +105,7 @@ public class AppContext extends WebMvcConfigurerAdapter {
 
     @Bean
     public MultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
+        return new StandardServletMultipartResolver();
     }
 
     @Bean
@@ -112,4 +126,18 @@ public class AppContext extends WebMvcConfigurerAdapter {
         return new UserServiceImpl();
     }
 
+    @Bean
+    public ManagerService managerService() {
+        return new ManagerServiceImpl();
+    }
+
+    @Bean
+    public CoursesDAO coursesDAO() {
+        return new CoursesDAOHibernateImpl(environment.getRequiredProperty("hibernate.jdbc.batch_size", Integer.class));
+    }
+
+    @Bean
+    public ProgramParser programParser() {
+        return new ProgramParser();
+    }
 }
