@@ -48,36 +48,51 @@
         <!-- Page Content -->
         <div class="container">
 
-            <div class="row">
-
-                <div class="col-lg-3">
-                    <h2 class="my-4">Система Дистанционного Учета Успеваемости</h1>
-                    <div class="list-group">
-                        <a href="#" class="list-group-item active">Предмет 1</a>
-                        <a href="#" class="list-group-item">Предмет 2</a>
-                        <a href="#" class="list-group-item">Предмет 3</a>
-                    </div>
-                </div>
-                <!-- /.col-lg-3 -->
-
-                <div class="col-lg-9">
-
-                    <div class="card mt-4">
-                        <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
-                        <div class="card-body">
-                            <h3 class="card-title">Имя предмета</h3>
-                            <h4>Совпадение с учебной программой: 33%</h4>
-                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente dicta fugit fugiat hic aliquam itaque facere, soluta. Totam id dolores, sint aperiam sequi pariatur praesentium animi perspiciatis molestias iure, ducimus!</p>
-                            <span class="text-success">Предмет защитан</span>
+            <c:choose>
+                <c:when test="${not empty submittedCourses and not empty activeCourse}">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <h2 class="my-4">Система Дистанционного Учета Успеваемости</h1>
+                            <div class="list-group">
+                                <c:forEach var="item" items="${submittedCourses}" varStatus="myIndex">
+                                    <a href="<c:url value='/student?submittedCourseId=${item.id}'/>"
+                                       class="${item.id == activeId ? 'list-group-item active' : 'list-group-item'}">
+                                            Предмет ${myIndex.count}
+                                    </a>
+                                </c:forEach>
+                            </div>
                         </div>
+                        <!-- /.col-lg-3 -->
+
+                        <div class="col-lg-9">
+
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h3 class="card-title">${activeCourse.courseName}</h3>
+                                    <h4>Ссылка на пройденный курс: <a href="${activeCourse.courseUrl}">${activeCourse.courseUrl}</a></h4>
+                                    <h4>Ссылка на сертификат: <a href="${activeCourse.certificateUrl}">${activeCourse.certificateUrl}</a></h4>
+                                    <h4>Оценка: ${activeCourse.graduate}</h4>
+                                    <c:choose>
+                                        <c:when test="${activeCourse.accepted}">
+                                            <span class="text-success">Курс защитан</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="text-info">Курс отправлен на проверку преподавателю</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                            <!-- /.card -->
+
+                        </div>
+                        <!-- /.col-lg-9 -->
+
                     </div>
-                    <!-- /.card -->
-
-                </div>
-                <!-- /.col-lg-9 -->
-
-            </div>
-
+                </c:when>
+                <c:otherwise>
+                    <h2 class="my-4">Вы не отправили еще ни одного курса на проверку</h1>
+                </c:otherwise>
+            </c:choose>
         </div>
         <!-- /.container -->
 

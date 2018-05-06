@@ -22,12 +22,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import ua.com.nure.dlas.repository.CoursesDAO;
+import ua.com.nure.dlas.repository.TeacherDAO;
 import ua.com.nure.dlas.repository.UserDAO;
 import ua.com.nure.dlas.repository.impl.CoursesDAOHibernateImpl;
+import ua.com.nure.dlas.repository.impl.TeacherDAOHibernateImpl;
 import ua.com.nure.dlas.repository.impl.UserDAOHibernateImpl;
 import ua.com.nure.dlas.services.ManagerService;
+import ua.com.nure.dlas.services.TeacherService;
 import ua.com.nure.dlas.services.UserService;
 import ua.com.nure.dlas.services.impl.ManagerServiceImpl;
+import ua.com.nure.dlas.services.impl.TeacherServiceImpl;
 import ua.com.nure.dlas.services.impl.UserServiceImpl;
 import ua.com.nure.dlas.services.utils.ProgramParser;
 
@@ -139,5 +143,15 @@ public class AppContext extends WebMvcConfigurerAdapter {
     @Bean
     public ProgramParser programParser() {
         return new ProgramParser();
+    }
+
+    @Bean
+    public TeacherService teacherService() {
+        return new TeacherServiceImpl();
+    }
+
+    @Bean
+    public TeacherDAO teacherDAO() {
+        return new TeacherDAOHibernateImpl();
     }
 }

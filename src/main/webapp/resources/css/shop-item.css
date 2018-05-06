@@ -21,6 +21,10 @@ footer {
 	height: 10vh;
 }
 
+.w-10 {
+    width: 10% !important;
+}
+
 @media (min-width: 992px) {
   body {
     padding-top: 56px;

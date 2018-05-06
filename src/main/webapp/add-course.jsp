@@ -84,6 +84,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                <label class="control-label col-sm-2" for="graduate">Полученная оценка:</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="graduate" name="graduate" min="0" max="100" placeholder="Вставьте полученную оценку от 0 до 100">
+                    </div>
+                </div>
+                <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-default">Добавить курс</button>
                     </div>
