@@ -21,7 +21,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     private static final Map<String, String> REDIRECT_MAPPING = ImmutableMap.of(
             Role.MANAGER.name(), "/upload-program",
             Role.STUDENT.name(), "/student",
-            Role.TEACHER.name(), "/teacher"
+            Role.TEACHER.name(), "/not-accepted-courses"
     );
 
     @Override

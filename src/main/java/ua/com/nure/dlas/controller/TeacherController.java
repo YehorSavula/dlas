@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import ua.com.nure.dlas.dto.ActiveCourse;
+import ua.com.nure.dlas.dto.NotAcceptedCourse;
 import ua.com.nure.dlas.model.Course;
 import ua.com.nure.dlas.model.SubmittedCourse;
-import ua.com.nure.dlas.model.SubmittedCourseStatus;
-import ua.com.nure.dlas.services.ManagerService;
 import ua.com.nure.dlas.services.TeacherService;
 import ua.com.nure.dlas.services.UserService;
 
@@ -24,24 +22,22 @@ import java.util.Comparator;
 import java.util.List;
 
 @Controller
-public class StudentController {
+public class TeacherController {
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private ManagerService managerService;
-
-    @Autowired
     private TeacherService teacherService;
 
-    @RequestMapping(value = "/student", method = RequestMethod.GET)
+    @RequestMapping(value = "/not-accepted-courses", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ModelAndView getStudentHomePage(HttpServletResponse response, Principal principal,
+    public ModelAndView getNotAcceptedCoursesPage(HttpServletResponse response, Principal principal,
                                            @RequestParam(value = "submittedCourseId", required = false) Integer submittedCourseId) {
+
         ModelAndView modelAndView = new ModelAndView();
 
-        List<SubmittedCourse> submittedCourses = userService.getSubmittedCourses(principal.getName());
+        List<SubmittedCourse> submittedCourses = teacherService.getNotAcceptedCourses(principal.getName());
         submittedCourses.sort(Comparator.comparingInt(SubmittedCourse::getCourseId));
         SubmittedCourse activeSubmittedCourse;
         if (submittedCourseId != null) {
@@ -55,51 +51,40 @@ public class StudentController {
         }
 
         if (activeSubmittedCourse == null) {
-            modelAndView.setViewName("student");
+            modelAndView.setViewName("not-accepted-courses");
             return modelAndView;
         }
 
         modelAndView.addObject("submittedCourses", submittedCourses);
 
         Course course = userService.getCourseById(activeSubmittedCourse.getCourseId());
-        ActiveCourse activeCourse = new ActiveCourse();
+        NotAcceptedCourse activeCourse = new NotAcceptedCourse();
         activeCourse.setCourseName(course.getName());
         activeCourse.setCourseUrl(activeSubmittedCourse.getCourseUrl());
         activeCourse.setCertificateUrl(activeSubmittedCourse.getCertificateUrl());
-        activeCourse.setStatus(activeSubmittedCourse.getCourseStatus().name());
+        activeCourse.setLecturesHours(activeSubmittedCourse.getLecturesHours());
+        activeCourse.setPracticalHours(activeSubmittedCourse.getPracticalHours());
         activeCourse.setGraduate(activeSubmittedCourse.getGraduate());
         modelAndView.addObject("activeCourse", activeCourse);
         modelAndView.addObject("activeId", activeSubmittedCourse.getId());
-        modelAndView.setViewName("student");
 
+        modelAndView.setViewName("not-accepted-courses");
         return modelAndView;
     }
 
-    @RequestMapping(value = "/add-course", method = RequestMethod.GET)
+    @RequestMapping(value = "/accept-course", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ModelAndView getAddCoursePage(HttpServletResponse response, Principal principal) {
-        ModelAndView modelAndView = new ModelAndView();
-        String groupName = userService.getGroupName(principal.getName());
-        if (StringUtils.isNotEmpty(groupName)) {
-            modelAndView.addObject("courses", managerService.getCoursesForGroup(groupName));
+    public void performCourseOperation(HttpServletResponse response, Principal principal,
+                                           @RequestParam(value = "submittedCourseId", required = false) Integer submittedCourseId,
+                                           @RequestParam(value = "operation", required = false) String operation) throws IOException {
+        if (StringUtils.isNotEmpty(operation)) {
+            if (operation.equals("accept")) {
+                teacherService.acceptCourse(submittedCourseId);
+            } else {
+                teacherService.rejectCourse(submittedCourseId);
+            }
         }
-        modelAndView.setViewName("add-course");
-        return modelAndView;
-    }
 
-    @RequestMapping(value = "/add-course", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public void addCourse(HttpServletResponse response, Principal principal,
-                          @RequestParam("course") Integer courseId,
-                          @RequestParam("lectures-hours") Integer lecturesHours,
-                          @RequestParam("practical-hours") Integer practicalHours,
-                          @RequestParam("course-url") String courseUrl,
-                          @RequestParam("certificate-url") String certificateUrl,
-                          @RequestParam("graduate") Integer graduate) throws IOException {
-
-        Integer submittedCourseId = userService.submitCourse(courseId, principal.getName(), lecturesHours, practicalHours,
-                courseUrl, certificateUrl, graduate);
-
-        response.sendRedirect(submittedCourseId == null ? "/dlas/student" : "/dlas/student?submittedCourseId=" + submittedCourseId);
+        response.sendRedirect("/dlas/not-accepted-courses");
     }
 }

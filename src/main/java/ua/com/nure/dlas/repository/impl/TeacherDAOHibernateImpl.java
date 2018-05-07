@@ -48,4 +48,19 @@ public class TeacherDAOHibernateImpl extends BaseDAO implements TeacherDAO {
             closeCurrentSession();
         }
     }
+
+    @Override
+    public void setCourseStatus(Integer submittedCourseId, SubmittedCourseStatus courseStatus) {
+        try {
+            Session session = openCurrentSession();
+            SubmittedCourse course = (SubmittedCourse) session.get(SubmittedCourse.class, submittedCourseId);
+            course.setCourseStatus(courseStatus);
+            session.update(course);
+            session.flush();
+        } catch (HibernateException e) {
+            LOG.error("Could not get courses", e);
+        } finally {
+            closeCurrentSession();
+        }
+    }
 }

@@ -9,4 +9,8 @@ public interface TeacherService {
     String getTeacherEmailForCourse(Integer courseId);
 
     List<SubmittedCourse> getNotAcceptedCourses(String teacherEmail);
+
+    void acceptCourse(Integer submittedCourseId);
+
+    void rejectCourse(Integer submittedCourseId);
 }

@@ -35,9 +35,6 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="<c:url value='/add-course'/>">Добавить курс</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="logout">Выход</a>
                         </li>
                     </ul>
@@ -55,7 +52,7 @@
                             <h2 class="my-4">Система Дистанционного Учета Успеваемости</h1>
                             <div class="list-group">
                                 <c:forEach var="item" items="${submittedCourses}" varStatus="myIndex">
-                                    <a href="<c:url value='/student?submittedCourseId=${item.id}'/>"
+                                    <a href="<c:url value='/not-accepted-courses?submittedCourseId=${item.id}'/>"
                                        class="${item.id == activeId ? 'list-group-item active' : 'list-group-item'}">
                                             Предмет ${myIndex.count}
                                     </a>
@@ -71,18 +68,11 @@
                                     <h3 class="card-title">${activeCourse.courseName}</h3>
                                     <h4>Ссылка на пройденный курс: <a href="${activeCourse.courseUrl}">${activeCourse.courseUrl}</a></h4>
                                     <h4>Ссылка на сертификат: <a href="${activeCourse.certificateUrl}">${activeCourse.certificateUrl}</a></h4>
+                                    <h4>Количество лекционных часов: ${activeCourse.lecturesHours}</h4>
+                                    <h4>Количество практических часов: ${activeCourse.practicalHours}</h4>
                                     <h4>Оценка: ${activeCourse.graduate}</h4>
-                                    <c:choose>
-                                        <c:when test="${activeCourse.status eq 'ACCEPTED'}">
-                                            <span class="text-success">Курс защитан</span>
-                                        </c:when>
-                                        <c:when test="${activeCourse.status eq 'REJECTED'}">
-                                            <span class="text-danger">Курс не был принят преподавателем</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="text-info">Курс отправлен на проверку преподавателю</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <a class="btn btn-outline-primary" href="<c:url value='/accept-course?submittedCourseId=${activeId}&operation=accept'/>" role="button">Подтвердить</a>
+                                    <a class="btn btn-outline-danger" href="<c:url value='/accept-course?submittedCourseId=${activeId}&operation=reject'/>" role="button">Вернуть</a>
                                 </div>
                             </div>
                             <!-- /.card -->

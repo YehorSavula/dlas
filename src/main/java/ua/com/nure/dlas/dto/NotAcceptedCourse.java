@@ -1,12 +1,13 @@
 package ua.com.nure.dlas.dto;
 
-public class ActiveCourse {
+public class NotAcceptedCourse {
 
     private String courseName;
     private String courseUrl;
     private String certificateUrl;
+    private Integer lecturesHours;
+    private Integer practicalHours;
     private Integer graduate;
-    private String status;
 
     public String getCourseName() {
         return courseName;
@@ -32,12 +33,20 @@ public class ActiveCourse {
         this.certificateUrl = certificateUrl;
     }
 
-    public String getStatus() {
-        return status;
+    public Integer getLecturesHours() {
+        return lecturesHours;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setLecturesHours(Integer lecturesHours) {
+        this.lecturesHours = lecturesHours;
+    }
+
+    public Integer getPracticalHours() {
+        return practicalHours;
+    }
+
+    public void setPracticalHours(Integer practicalHours) {
+        this.practicalHours = practicalHours;
     }
 
     public Integer getGraduate() {

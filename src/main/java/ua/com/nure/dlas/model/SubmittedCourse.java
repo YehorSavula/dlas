@@ -118,7 +118,7 @@ public class SubmittedCourse {
     }
 
     @NotNull
-    @Column(name = "course_status", columnDefinition = "enum('SUBMITTED', 'ACCEPTED')")
+    @Column(name = "course_status", columnDefinition = "enum('SUBMITTED', 'ACCEPTED', 'REJECTED')")
     @Enumerated(EnumType.STRING)
     public SubmittedCourseStatus getCourseStatus() {
         return courseStatus;
