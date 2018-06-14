@@ -17,10 +17,11 @@ public class SubmittedCourse {
     private Integer graduate;
     private SubmittedCourseStatus courseStatus;
     private String teacherEmail;
+    private Integer acceptedCriteries;
 
     public SubmittedCourse(Integer courseId, String studentEmail, Integer lecturesHours, Integer practicalHours,
                            String courseUrl, String certificateUrl, Integer graduate,
-                           SubmittedCourseStatus courseStatus, String teacherEmail) {
+                           SubmittedCourseStatus courseStatus, String teacherEmail, Integer acceptedCriteries) {
         this.courseId = courseId;
         this.studentEmail = studentEmail;
         this.lecturesHours = lecturesHours;
@@ -30,6 +31,7 @@ public class SubmittedCourse {
         this.graduate = graduate;
         this.courseStatus = courseStatus;
         this.teacherEmail = teacherEmail;
+        this.acceptedCriteries = acceptedCriteries;
     }
 
     public SubmittedCourse() {
@@ -136,5 +138,15 @@ public class SubmittedCourse {
 
     public void setTeacherEmail(String teacherEmail) {
         this.teacherEmail = teacherEmail;
+    }
+
+    @NotNull
+    @Column(name = "accepted_criteries")
+    public Integer getAcceptedCriteries() {
+        return acceptedCriteries;
+    }
+
+    public void setAcceptedCriteries(Integer acceptedCriteries) {
+        this.acceptedCriteries = acceptedCriteries;
     }
 }

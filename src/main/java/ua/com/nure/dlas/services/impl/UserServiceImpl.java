@@ -3,6 +3,7 @@ package ua.com.nure.dlas.services.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.com.nure.dlas.dto.AddCourseData;
 import ua.com.nure.dlas.model.Course;
 import ua.com.nure.dlas.model.SubmittedCourse;
 import ua.com.nure.dlas.model.SubmittedCourseStatus;
@@ -14,6 +15,7 @@ import ua.com.nure.dlas.services.UserService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -50,25 +52,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer submitCourse(Integer courseId, String studentEmail, Integer lecturesHours, Integer practicalHours,
-                                String courseUrl, String certificateUrl, Integer graduate) {
-        String teacherEmail = teacherService.getTeacherEmailForCourse(courseId);
-        Course course = coursesDAO.getCourseById(courseId);
+    public Integer submitCourse(AddCourseData particularCourseData) {
+        String teacherEmail = teacherService.getTeacherEmailForCourse(particularCourseData.getCourseId());
+        Course course = coursesDAO.getCourseById(particularCourseData.getCourseId());
         if (StringUtils.isEmpty(teacherEmail) || Objects.isNull(course)) {
             return null;
         }
 
         SubmittedCourse submittedCourse = new SubmittedCourse();
-        submittedCourse.setCourseId(courseId);
-        submittedCourse.setStudentEmail(studentEmail);
-        submittedCourse.setLecturesHours(lecturesHours);
-        submittedCourse.setPracticalHours(practicalHours);
-        submittedCourse.setCourseUrl(courseUrl);
-        submittedCourse.setCertificateUrl(certificateUrl);
-        submittedCourse.setGraduate(graduate);
+        submittedCourse.setCourseId(particularCourseData.getCourseId());
+        submittedCourse.setStudentEmail(particularCourseData.getStudentEmail());
+        submittedCourse.setLecturesHours(particularCourseData.getLecturesHours());
+        submittedCourse.setPracticalHours(particularCourseData.getPracticalHours());
+        submittedCourse.setCourseUrl(particularCourseData.getCourseUrl());
+        submittedCourse.setCertificateUrl(particularCourseData.getCertificateUrl());
+        submittedCourse.setGraduate(particularCourseData.getGraduate());
         submittedCourse.setTeacherEmail(teacherEmail);
-        boolean isAutoAccepted = course.getHours() * AUTO_ACCEPT_CRITERIA <= (lecturesHours + practicalHours);
-        submittedCourse.setCourseStatus(isAutoAccepted ? SubmittedCourseStatus.ACCEPTED : SubmittedCourseStatus.SUBMITTED);
+
+        int submittedCurseHours = particularCourseData.getLecturesHours() + particularCourseData.getPracticalHours();
+        boolean isHourAccepted = course.getHours() * AUTO_ACCEPT_CRITERIA <= submittedCurseHours;
+
+        List<String> courseCriteria = teacherService.getCourseCriteria(particularCourseData.getCourseId());
+        List<String> notAcceptedCriteria = courseCriteria.stream()
+                .filter(i -> !particularCourseData.getSubmiitedCriteria().contains(i))
+                .collect(Collectors.toList());
+
+        boolean isCriteriaAccepted = courseCriteria.size() * AUTO_ACCEPT_CRITERIA <= notAcceptedCriteria.size();
+        submittedCourse.setCourseStatus(isHourAccepted && isCriteriaAccepted ? SubmittedCourseStatus.ACCEPTED
+                : SubmittedCourseStatus.SUBMITTED);
+        submittedCourse.setAcceptedCriteries(courseCriteria.size() - notAcceptedCriteria.size());
 
         return coursesDAO.uploadSubmittedCourse(submittedCourse);
     }

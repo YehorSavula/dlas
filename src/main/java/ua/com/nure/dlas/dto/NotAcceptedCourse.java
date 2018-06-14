@@ -8,6 +8,8 @@ public class NotAcceptedCourse {
     private Integer lecturesHours;
     private Integer practicalHours;
     private Integer graduate;
+    private Integer acceptedCriteria;
+    private Integer allCriteria;
 
     public String getCourseName() {
         return courseName;
@@ -55,5 +57,21 @@ public class NotAcceptedCourse {
 
     public void setGraduate(Integer graduate) {
         this.graduate = graduate;
+    }
+
+    public Integer getAcceptedCriteria() {
+        return acceptedCriteria;
+    }
+
+    public void setAcceptedCriteria(Integer acceptedCriteria) {
+        this.acceptedCriteria = acceptedCriteria;
+    }
+
+    public Integer getAllCriteria() {
+        return allCriteria;
+    }
+
+    public void setAllCriteria(Integer allCriteria) {
+        this.allCriteria = allCriteria;
     }
 }

@@ -48,9 +48,10 @@ public class CoursesDAOHibernateImpl extends BaseDAO implements CoursesDAO {
     public List<Course> getCoursesForGroup(String groupName) {
         try {
             Session session = openCurrentSession();
-            Query q = session.createQuery("from Course where groupName = :groupName");
-            q.setParameter("groupName", groupName);
-            return q.list();
+            return session.createSQLQuery("SELECT * FROM course where group_name = :groupName AND criteria_added = 1")
+                    .addEntity(Course.class)
+                    .setParameter("groupName", groupName)
+                    .list();
         } catch (HibernateException e) {
             LOG.error("Could not get courses", e);
             return Collections.emptyList();

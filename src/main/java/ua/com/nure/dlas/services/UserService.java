@@ -1,5 +1,6 @@
 package ua.com.nure.dlas.services;
 
+import ua.com.nure.dlas.dto.AddCourseData;
 import ua.com.nure.dlas.model.Course;
 import ua.com.nure.dlas.model.SubmittedCourse;
 import ua.com.nure.dlas.model.User;
@@ -16,8 +17,7 @@ public interface UserService {
 
     SubmittedCourse getSubmittedCourseById(Integer courseId);
 
-    Integer submitCourse(Integer courseId, String studentEmail, Integer lecturesHours, Integer practicalHours,
-                         String courseUrl, String certificateUrl, Integer graduate);
+    Integer submitCourse(AddCourseData particularCourseData);
 
     Course getCourseById(Integer courseId);
 

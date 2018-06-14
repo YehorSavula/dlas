@@ -10,14 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import ua.com.nure.dlas.dto.ActiveCourse;
+import ua.com.nure.dlas.dto.AddCourseData;
 import ua.com.nure.dlas.model.Course;
 import ua.com.nure.dlas.model.SubmittedCourse;
-import ua.com.nure.dlas.model.SubmittedCourseStatus;
 import ua.com.nure.dlas.services.ManagerService;
 import ua.com.nure.dlas.services.TeacherService;
 import ua.com.nure.dlas.services.UserService;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Comparator;
@@ -87,19 +88,45 @@ public class StudentController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/add-course", method = RequestMethod.POST)
+    @RequestMapping(value = "/fill-criteria", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public void addCourse(HttpServletResponse response, Principal principal,
+    public ModelAndView fillParticularData(Principal principal, HttpSession session,
                           @RequestParam("course") Integer courseId,
                           @RequestParam("lectures-hours") Integer lecturesHours,
                           @RequestParam("practical-hours") Integer practicalHours,
                           @RequestParam("course-url") String courseUrl,
                           @RequestParam("certificate-url") String certificateUrl,
-                          @RequestParam("graduate") Integer graduate) throws IOException {
+                          @RequestParam("graduate") Integer graduate) {
 
-        Integer submittedCourseId = userService.submitCourse(courseId, principal.getName(), lecturesHours, practicalHours,
-                courseUrl, certificateUrl, graduate);
+        AddCourseData particularFilledCourse = new AddCourseData();
+        particularFilledCourse.setCourseId(courseId);
+        particularFilledCourse.setLecturesHours(lecturesHours);
+        particularFilledCourse.setPracticalHours(practicalHours);
+        particularFilledCourse.setCourseUrl(courseUrl);
+        particularFilledCourse.setCertificateUrl(certificateUrl);
+        particularFilledCourse.setGraduate(graduate);
+        particularFilledCourse.setStudentEmail(principal.getName());
 
+        session.setAttribute("addedCourseData", particularFilledCourse);
+
+        List<String> courseCriteries = teacherService.getCourseCriteria(courseId);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("courseCriteries", courseCriteries);
+        modelAndView.setViewName("fill-criteries");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/add-course", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void submitCourse(HttpServletResponse response, HttpSession session,
+                             @RequestParam("criteries") List<String> submittedCriteries) throws IOException {
+        AddCourseData particularFilledCourse = (AddCourseData) session.getAttribute("addedCourseData");
+        particularFilledCourse.setSubmiitedCriteria(submittedCriteries);
+
+        Integer submittedCourseId = userService.submitCourse(particularFilledCourse);
+
+        session.setAttribute("addedCourseData", null);
         response.sendRedirect(submittedCourseId == null ? "/dlas/student" : "/dlas/student?submittedCourseId=" + submittedCourseId);
     }
 }

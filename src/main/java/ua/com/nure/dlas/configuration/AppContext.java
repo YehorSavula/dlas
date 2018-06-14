@@ -152,6 +152,6 @@ public class AppContext extends WebMvcConfigurerAdapter {
 
     @Bean
     public TeacherDAO teacherDAO() {
-        return new TeacherDAOHibernateImpl();
+        return new TeacherDAOHibernateImpl(environment.getRequiredProperty("hibernate.jdbc.batch_size", Integer.class));
     }
 }

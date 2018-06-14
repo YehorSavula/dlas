@@ -64,6 +64,8 @@ public class TeacherController {
         activeCourse.setCertificateUrl(activeSubmittedCourse.getCertificateUrl());
         activeCourse.setLecturesHours(activeSubmittedCourse.getLecturesHours());
         activeCourse.setPracticalHours(activeSubmittedCourse.getPracticalHours());
+        activeCourse.setAcceptedCriteria(activeSubmittedCourse.getAcceptedCriteries());
+        activeCourse.setAllCriteria(teacherService.getCourseCriteria(activeSubmittedCourse.getCourseId()).size());
         activeCourse.setGraduate(activeSubmittedCourse.getGraduate());
         modelAndView.addObject("activeCourse", activeCourse);
         modelAndView.addObject("activeId", activeSubmittedCourse.getId());
@@ -86,5 +88,43 @@ public class TeacherController {
         }
 
         response.sendRedirect("/dlas/not-accepted-courses");
+    }
+
+    @RequestMapping(value = "/courses-without-criteria", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView getCoursesWithoutCriteriaPage(HttpServletResponse response, Principal principal) {
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        List<Course> coursesWithoutCriteria = teacherService.getCoursesWithoutCriteria(principal.getName());
+        coursesWithoutCriteria.sort(Comparator.comparingInt(Course::getId));
+
+        modelAndView.addObject("coursesWithoutCriteria", coursesWithoutCriteria);
+
+        modelAndView.setViewName("courses-without-criteria");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/add-criteria", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView getAddCriteriaPage(@RequestParam(value = "courseId", required = true) Integer courseId) {
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.addObject("courseId", courseId);
+
+        modelAndView.setViewName("add-criteria");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/add-criteria", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void uploadCriteries(HttpServletResponse response,
+                                        @RequestParam(value = "courseId", required = true) Integer courseId,
+                                        @RequestParam(value = "criteries", required = true) List<String> criteries) throws IOException {
+
+        teacherService.uploadCriteries(courseId, criteries);
+
+        response.sendRedirect("/dlas/courses-without-criteria");
     }
 }
