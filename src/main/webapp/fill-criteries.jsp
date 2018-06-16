@@ -48,7 +48,7 @@
         <!-- Page Content -->
         <div class="container">
             <form class="form-horizontal pt-5" action="<c:url value='add-course'/>" method="post">
-                <h3 class="card-title">Отметьте те критерии, которые были вами изучены:</h3>
+                <h3 class="card-title">Отметьте те компетенции, которые были вами получены:</h3>
                 <div class="form-group">
                     <div class="col-sm-10">
                         <c:forEach items="${courseCriteries}" var="criteria" varStatus="myIndex">

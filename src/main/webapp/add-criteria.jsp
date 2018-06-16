@@ -49,9 +49,9 @@
         <!-- Page Content -->
         <div class="container">
             <form class="form-horizontal pt-5" action="<c:url value='add-criteria?courseId=${courseId}'/>" method="post">
-                <h3 class="card-title pt-5">Добавить критерии:</h3>
+                <h3 class="card-title pt-5">Добавить компетенции:</h3>
                 <div class="form-group multiple-form-group" data-max=15>
-                    <label>Введите критерий: (макс - 15)</label>
+                    <label>Введите компетенцию: (макс - 15)</label>
 
                     <div class="form-group input-group">
                         <input type="text" name="criteries" class="form-control">
@@ -61,7 +61,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default">Добавить критерии</button>
+                        <button type="submit" class="btn btn-default">Добавить компетенции</button>
                     </div>
                 </div>
             </form>

@@ -35,7 +35,7 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="<c:url value='/courses-without-criteria'/>">Курсы без критериев</a>
+                            <a class="nav-link" href="<c:url value='/courses-without-criteria'/>">Курсы без компетенций</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="logout">Выход</a>
@@ -73,7 +73,7 @@
                                     <h4>Ссылка на сертификат: <a href="${activeCourse.certificateUrl}">${activeCourse.certificateUrl}</a></h4>
                                     <h4>Количество лекционных часов: ${activeCourse.lecturesHours}</h4>
                                     <h4>Количество практических часов: ${activeCourse.practicalHours}</h4>
-                                    <h4>Совпало критериев ${activeCourse.acceptedCriteria} из ${activeCourse.allCriteria}</h4>
+                                    <h4>Совпало компетенций ${activeCourse.acceptedCriteria} из ${activeCourse.allCriteria}</h4>
                                     <h4>Оценка: ${activeCourse.graduate}</h4>
                                     <a class="btn btn-outline-primary" href="<c:url value='/accept-course?submittedCourseId=${activeId}&operation=accept'/>" role="button">Подтвердить</a>
                                     <a class="btn btn-outline-danger" href="<c:url value='/accept-course?submittedCourseId=${activeId}&operation=reject'/>" role="button">Вернуть</a>
