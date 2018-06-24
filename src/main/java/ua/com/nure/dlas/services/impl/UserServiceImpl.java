@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
                 .filter(i -> !particularCourseData.getSubmiitedCriteria().contains(i))
                 .collect(Collectors.toList());
 
-        boolean isCriteriaAccepted = courseCriteria.size() * AUTO_ACCEPT_CRITERIA <= notAcceptedCriteria.size();
+        boolean isCriteriaAccepted = notAcceptedCriteria.size() <= courseCriteria.size() * AUTO_ACCEPT_CRITERIA;
         submittedCourse.setCourseStatus(isHourAccepted && isCriteriaAccepted ? SubmittedCourseStatus.ACCEPTED
                 : SubmittedCourseStatus.SUBMITTED);
         submittedCourse.setAcceptedCriteries(courseCriteria.size() - notAcceptedCriteria.size());
